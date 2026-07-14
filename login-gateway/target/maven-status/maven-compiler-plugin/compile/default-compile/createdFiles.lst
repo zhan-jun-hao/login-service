@@ -1,0 +1,4 @@
+com\login\gateway\filter\AuthGlobalFilter.class
+com\login\gateway\filter\TraceIdFilter.class
+com\login\gateway\config\WhitelistProperties.class
+com\login\gateway\GatewayApplication.class

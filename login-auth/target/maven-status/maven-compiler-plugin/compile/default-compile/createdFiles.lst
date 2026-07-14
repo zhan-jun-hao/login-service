@@ -1,0 +1,9 @@
+com\login\auth\controller\AuthController.class
+com\login\auth\AuthApplication.class
+com\login\auth\mapper\UserMapper.class
+com\login\auth\config\SecurityUser.class
+com\login\auth\service\AuthService.class
+com\login\auth\entity\User.class
+com\login\auth\service\impl\AuthServiceImpl.class
+com\login\auth\config\SecurityConfig.class
+com\login\auth\config\UserDetailsServiceImpl.class
