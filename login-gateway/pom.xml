@@ -13,7 +13,16 @@
     <artifactId>login-gateway</artifactId>
     <packaging>jar</packaging>
     <name>login-gateway</name>
-    <description>API 网关 — 路由转发 + JWT 校验</description>
+    <description>
+        API 网关 — 统一入口，负责：
+        1. 路由转发（Nacos 服务发现）
+        2. OAuth2 资源服务器（JWT 校验）
+        3. 白名单放行
+        4. 用户黑名单校验（精准踢人）
+        5. 版本控制校验（批量踢人）
+        6. Token 黑名单校验（登出保护）
+        7. 全链路追踪（TraceId）
+    </description>
 
     <dependencies>
         <!-- 公共模块 -->
@@ -22,22 +31,60 @@
             <artifactId>login-common</artifactId>
         </dependency>
 
-        <!-- Spring Cloud Gateway（注意：不要引入 spring-boot-starter-web，会冲突） -->
+        <!-- Spring Cloud Gateway（响应式网关，不要引入 spring-boot-starter-web） -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
 
-        <!-- Spring Cloud Alibaba Nacos Discovery -->
+        <!--
+            OAuth2 Resource Server — 标准的 OAuth2 资源服务器
+            网关作为资源服务器，负责校验 JWT token 的签名和有效期
+            使用与 auth-service 相同的对称密钥进行本地校验，无需远程调用
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+
+        <!-- Spring Cloud Alibaba Nacos Discovery（服务发现） -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
 
-        <!-- Redis（用于 token 黑名单检查） -->
+        <!-- Spring Cloud Alibaba Nacos Config（配置中心 — 动态配置白名单/黑名单/版本号） -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <!--
+            Spring Cloud Loadbalancer（客户端负载均衡）
+            Spring Cloud 2023.0 开始不再包含 Ribbon，使用 Spring Cloud LoadBalancer 替代
+        -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+
+        <!--
+            Redis Reactive（响应式 Redis，用于 token 黑名单、用户黑名单、版本校验）
+            Gateway 是基于 WebFlux 的，必须使用响应式 Redis
+        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+        </dependency>
+
+        <!--
+            Bootstrap 配置支持
+            Spring Cloud 2020.0 之后默认不启用 bootstrap，需要手动引入
+            用于加载 Nacos 配置中心的 bootstrap.yml
+        -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
         </dependency>
 
         <!-- Lombok -->

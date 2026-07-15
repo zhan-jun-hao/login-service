@@ -1,0 +1,33 @@
+# ==========================================
+# Nacos 共享配置 — shared-redis.yaml
+# ==========================================
+# Data ID: shared-redis.yaml
+# Group: DEFAULT_GROUP
+# 适用服务: login-gateway, login-auth, login-admin, login-user
+# 说明: 所有微服务共享的 Redis 连接配置
+# ==========================================
+
+spring:
+  data:
+    redis:
+      # Redis 服务器地址
+      host: localhost
+      # Redis 端口
+      port: 6379
+      # Redis 密码（生产环境必须设置）
+      password:
+      # 使用的数据库编号（0-15）
+      database: 0
+      # 连接超时时间
+      timeout: 3000ms
+      # Lettuce 连接池配置
+      lettuce:
+        pool:
+          # 最大活跃连接数
+          max-active: 16
+          # 最大空闲连接数
+          max-idle: 8
+          # 最小空闲连接数（预热连接池）
+          min-idle: 4
+          # 获取连接的最大等待时间
+          max-wait: 3000ms

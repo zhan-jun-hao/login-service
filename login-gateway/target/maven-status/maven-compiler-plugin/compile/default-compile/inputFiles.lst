@@ -1,4 +1,5 @@
-D:\loginService\login-gateway\src\main\java\com\login\gateway\config\WhitelistProperties.java
-D:\loginService\login-gateway\src\main\java\com\login\gateway\filter\AuthGlobalFilter.java
-D:\loginService\login-gateway\src\main\java\com\login\gateway\filter\TraceIdFilter.java
-D:\loginService\login-gateway\src\main\java\com\login\gateway\GatewayApplication.java
+D:\login-service\login-gateway\src\main\java\com\login\gateway\config\ResourceServerConfig.java
+D:\login-service\login-gateway\src\main\java\com\login\gateway\config\WhitelistProperties.java
+D:\login-service\login-gateway\src\main\java\com\login\gateway\filter\AuthGlobalFilter.java
+D:\login-service\login-gateway\src\main\java\com\login\gateway\filter\TraceIdFilter.java
+D:\login-service\login-gateway\src\main\java\com\login\gateway\GatewayApplication.java

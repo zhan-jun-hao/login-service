@@ -1,3 +1,10 @@
+# ==========================================
+# login-auth 应用配置 — 认证服务
+# ==========================================
+# 端口：8081
+# 职责：用户认证、JWT 签发、管理员踢人管理
+# ==========================================
+
 server:
   port: 8081
 
@@ -5,51 +12,95 @@ spring:
   application:
     name: login-auth
 
+  # ==========================================
   # MySQL 数据源
+  # ==========================================
   datasource:
-    url: jdbc:mysql://localhost:3306/login_service?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+    url: jdbc:mysql://localhost:3306/login_service?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+    # HikariCP 连接池配置（Spring Boot 默认）
+    hikari:
+      maximum-pool-size: 20           # 最大连接数
+      minimum-idle: 5                 # 最小空闲连接
+      idle-timeout: 300000            # 空闲超时（5分钟）
+      connection-timeout: 30000       # 连接超时
+      max-lifetime: 1800000           # 连接最大存活时间（30分钟）
 
-  # Redis
+  # ==========================================
+  # Redis 配置
+  # ==========================================
+  # 存储内容：
+  #   - refresh_token
+  #   - token 黑名单（登出）
+  #   - 用户黑名单（精准踢人）
+  #   - 版本控制配置
+  #   - 白名单路径
+  #   - 在线用户集合
+  # ==========================================
   data:
     redis:
       host: localhost
       port: 6379
-      password:
-      database: 0
+      password:                       # 生产环境必须设置密码
+      database: 0                     # 使用 0 号数据库
       timeout: 3000ms
       lettuce:
         pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 0
-          max-wait: 1000ms
+          max-active: 16              # 最大活跃连接
+          max-idle: 8                 # 最大空闲连接
+          min-idle: 2                 # 最小空闲连接
+          max-wait: 3000ms            # 获取连接最大等待时间
 
-  # Nacos 服务发现
+  # ==========================================
+  # Spring Cloud Nacos 服务发现
+  # ==========================================
   cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848
-        namespace: public
-        group: DEFAULT_GROUP
+        server-addr: localhost:8848    # Nacos 服务地址
+        namespace: public              # 命名空间
+        group: DEFAULT_GROUP           # 服务分组
+        metadata:
+          version: 1.0.0
+          region: default
 
-# MyBatis-Plus
+# ==========================================
+# MyBatis-Plus 配置
+# ==========================================
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
   type-aliases-package: com.login.auth.entity
   configuration:
+    # 下划线转驼峰（如 create_time → createTime）
     map-underscore-to-camel-case: true
+    # SQL 日志输出（开发环境开启，生产环境关闭）
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
+      # 主键策略：数据库自增
       id-type: auto
+      # 逻辑删除字段
       logic-delete-field: deleted
       logic-delete-value: 1
       logic-not-delete-value: 0
 
-# 日志
+# ==========================================
+# JWT 配置
+# ==========================================
+jwt:
+  # JWT 签名密钥（生产环境必须从环境变量读取，不能硬编码）
+  secret: login-service-jwt-secret-key-2024-must-be-at-least-256-bits-long!!
+
+# ==========================================
+# 日志配置
+# ==========================================
 logging:
   level:
+    # 项目包：debug 级别（开发环境）
     com.login: debug
+    # MyBatis：debug 级别（查看 SQL 和参数）
+    com.login.auth.mapper: debug
+    # Spring Security：debug 级别（查看认证流程）
+    org.springframework.security: info

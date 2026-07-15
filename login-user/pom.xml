@@ -13,7 +13,10 @@
     <artifactId>login-user</artifactId>
     <packaging>jar</packaging>
     <name>login-user</name>
-    <description>用户服务 — 示例业务服务（受 Gateway JWT 保护）</description>
+    <description>
+        用户服务 — 示例业务服务（受 Gateway JWT 保护）
+        提供受保护的用户接口，演示 JWT 鉴权后的用户信息获取。
+    </description>
 
     <dependencies>
         <!-- 公共模块 -->
@@ -28,10 +31,22 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Spring Cloud Alibaba Nacos Discovery -->
+        <!-- Spring Cloud Alibaba Nacos Discovery（服务发现） -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <!-- Spring Cloud Alibaba Nacos Config（配置中心） -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <!-- Bootstrap 配置支持 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
         </dependency>
 
         <!-- Validation -->

@@ -1,3 +1,11 @@
+# ==========================================
+# login-user 应用配置 — 用户服务
+# ==========================================
+# 端口：8082
+# 职责：示例业务服务，演示受 JWT 保护的接口
+# 所有 /user/** 请求由 Gateway 鉴权后转发至此
+# ==========================================
+
 server:
   port: 8082
 
@@ -11,6 +19,8 @@ spring:
         server-addr: localhost:8848
         namespace: public
         group: DEFAULT_GROUP
+        metadata:
+          version: 1.0.0
 
 # 日志
 logging:

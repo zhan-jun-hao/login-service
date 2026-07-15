@@ -1,0 +1,48 @@
+# ==========================================
+# Nacos 配置中心 Bootstrap 配置
+# ==========================================
+# bootstrap.yml 的加载优先级高于 application.yml
+# 用于从 Nacos 配置中心加载共享配置
+# Spring Cloud 2020.0+ 需要引入 spring-cloud-starter-bootstrap 依赖
+
+spring:
+  application:
+    name: login-gateway
+
+  cloud:
+    nacos:
+      # Nacos 配置中心
+      config:
+        # Nacos 服务地址
+        server-addr: localhost:8848
+        # 命名空间（public 为默认命名空间，生产环境请创建独立命名空间）
+        namespace: public
+        # 配置分组
+        group: DEFAULT_GROUP
+        # 配置文件后缀
+        file-extension: yaml
+        # 共享配置列表（多个微服务共用的配置）
+        shared-configs:
+          # 共享的 Redis 配置
+          - data-id: shared-redis.yaml
+            group: DEFAULT_GROUP
+            refresh: true     # 支持动态刷新
+          # 共享的 JWT 配置
+          - data-id: shared-jwt.yaml
+            group: DEFAULT_GROUP
+            refresh: true
+        # 扩展配置列表
+        extension-configs:
+          # Gateway 特有的路由和安全配置
+          - data-id: gateway-routes.yaml
+            group: DEFAULT_GROUP
+            refresh: true
+        # 是否开启配置热刷新
+        refresh-enabled: true
+        # 配置是否启用
+        enabled: true
+
+# 日志
+logging:
+  level:
+    com.alibaba.nacos.client.config: warn

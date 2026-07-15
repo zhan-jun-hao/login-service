@@ -1,0 +1,37 @@
+# ==========================================
+# Nacos 共享配置 — shared-jwt.yaml
+# ==========================================
+# Data ID: shared-jwt.yaml
+# Group: DEFAULT_GROUP
+# 适用服务: login-gateway, login-auth, login-admin
+# 说明: JWT 签名密钥和 Token 有效期配置
+# ==========================================
+
+jwt:
+  # JWT HMAC-SHA256 签名密钥（至少 256 bits = 32 字节）
+  # 生产环境必须使用强随机密钥，绝对不能硬编码
+  secret: login-service-jwt-secret-key-2024-must-be-at-least-256-bits-long!!
+
+  # Token 有效期配置
+  token:
+    # access_token 有效期（分钟）
+    access-expire-minutes: 30
+    # refresh_token 有效期（天）
+    refresh-expire-days: 7
+
+  # 白名单配置 — 无需 JWT 鉴权的路径
+  whitelist:
+    # 是否启用白名单
+    enabled: true
+    # 白名单路径（支持 Ant 风格通配符）
+    paths:
+      - /auth/login
+      - /auth/register
+      - /auth/refresh
+      - /actuator/health
+      - /actuator/info
+      - /swagger-ui/**
+      - /v3/api-docs/**
+      - /public/**
+      - /favicon.ico
+      - /error

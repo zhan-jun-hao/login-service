@@ -1,6 +1,9 @@
-D:\loginService\login-common\src\main\java\com\login\common\constant\RedisKey.java
-D:\loginService\login-common\src\main\java\com\login\common\context\UserContextHolder.java
-D:\loginService\login-common\src\main\java\com\login\common\model\LoginUser.java
-D:\loginService\login-common\src\main\java\com\login\common\model\Result.java
-D:\loginService\login-common\src\main\java\com\login\common\model\TokenResult.java
-D:\loginService\login-common\src\main\java\com\login\common\utils\JwtUtil.java
+D:\login-service\login-common\src\main\java\com\login\common\constant\RedisKey.java
+D:\login-service\login-common\src\main\java\com\login\common\context\UserContextHolder.java
+D:\login-service\login-common\src\main\java\com\login\common\model\KickRecord.java
+D:\login-service\login-common\src\main\java\com\login\common\model\LoginUser.java
+D:\login-service\login-common\src\main\java\com\login\common\model\Result.java
+D:\login-service\login-common\src\main\java\com\login\common\model\TokenResult.java
+D:\login-service\login-common\src\main\java\com\login\common\model\VersionConfig.java
+D:\login-service\login-common\src\main\java\com\login\common\utils\JwtUtil.java
+D:\login-service\login-common\src\main\java\com\login\common\utils\VersionUtil.java

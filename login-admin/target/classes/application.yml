@@ -1,0 +1,53 @@
+# ==========================================
+# login-admin 应用配置 — 管理员服务
+# ==========================================
+# 端口：8083
+# 职责：管理控制台后端（仪表盘、踢人管理、版本控制）
+# 所有接口受 Gateway JWT 保护，仅 admin 角色可访问
+# ==========================================
+
+server:
+  port: 8083
+
+spring:
+  application:
+    name: login-admin
+
+  # ==========================================
+  # Redis 配置
+  # ==========================================
+  # 用于查询黑名单、在线用户、版本配置等管理数据
+  # ==========================================
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 0
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+          max-wait: 3000ms
+
+  # ==========================================
+  # Nacos 服务发现
+  # ==========================================
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: public
+        group: DEFAULT_GROUP
+        metadata:
+          version: 1.0.0
+          region: default
+
+# ==========================================
+# 日志配置
+# ==========================================
+logging:
+  level:
+    com.login: debug

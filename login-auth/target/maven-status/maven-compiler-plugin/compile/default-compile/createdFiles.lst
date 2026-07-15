@@ -3,6 +3,7 @@ com\login\auth\AuthApplication.class
 com\login\auth\mapper\UserMapper.class
 com\login\auth\config\SecurityUser.class
 com\login\auth\service\AuthService.class
+com\login\auth\controller\AdminController.class
 com\login\auth\entity\User.class
 com\login\auth\service\impl\AuthServiceImpl.class
 com\login\auth\config\SecurityConfig.class

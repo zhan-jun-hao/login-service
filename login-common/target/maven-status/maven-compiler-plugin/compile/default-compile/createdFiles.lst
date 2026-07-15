@@ -1,8 +1,13 @@
+com\login\common\model\VersionConfig$VersionConfigBuilder.class
 com\login\common\model\LoginUser$LoginUserBuilder.class
 com\login\common\model\LoginUser.class
 com\login\common\model\TokenResult.class
-com\login\common\context\UserContextHolder.class
-com\login\common\model\TokenResult$TokenResultBuilder.class
 com\login\common\utils\JwtUtil.class
 com\login\common\constant\RedisKey.class
+com\login\common\model\KickRecord$KickRecordBuilder.class
+com\login\common\model\VersionConfig.class
+com\login\common\utils\VersionUtil.class
+com\login\common\model\KickRecord.class
+com\login\common\context\UserContextHolder.class
+com\login\common\model\TokenResult$TokenResultBuilder.class
 com\login\common\model\Result.class

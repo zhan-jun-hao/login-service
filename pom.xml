@@ -9,30 +9,52 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
     <name>login-service</name>
-    <description>微服务登录鉴权系统 — Gateway + JWT + Spring Security</description>
+    <description>
+        微服务登录鉴权系统 — Spring Cloud 脚手架
+        技术栈：Gateway + Nacos + Spring Security + OAuth2 + Redis
+        功能：白名单放行 / 黑名单精准踢人 / 版本号批量踢人
+    </description>
 
+    <!-- ==========================================
+         子模块列表
+         ========================================== -->
     <modules>
+        <!-- 公共模块：JWT 工具、统一响应、常量、上下文 -->
         <module>login-common</module>
+        <!-- 认证服务：登录/注册/Token 签发/刷新/登出 -->
         <module>login-auth</module>
+        <!-- API 网关：路由转发、JWT 鉴权、黑白名单、版本控制 -->
         <module>login-gateway</module>
+        <!-- 用户服务：示例业务服务（受 Gateway JWT 保护） -->
         <module>login-user</module>
+        <!-- 管理员服务：管理控制台（踢人管理、版本控制、系统监控） -->
+        <module>login-admin</module>
     </modules>
 
+    <!-- ==========================================
+         全局版本号统一管理
+         ========================================== -->
     <properties>
         <java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <!-- Spring 版本 -->
         <spring-boot.version>3.2.0</spring-boot.version>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
         <spring-cloud-alibaba.version>2023.0.1.0</spring-cloud-alibaba.version>
 
+        <!-- 第三方库版本 -->
         <jjwt.version>0.12.3</jjwt.version>
         <mybatis-plus.version>3.5.5</mybatis-plus.version>
         <mysql.version>8.0.33</mysql.version>
     </properties>
 
+    <!-- ==========================================
+         依赖版本管理（统一管理子模块的依赖版本）
+         子模块引用时无需写版本号
+         ========================================== -->
     <dependencyManagement>
         <dependencies>
             <!-- Spring Boot BOM -->
@@ -44,7 +66,7 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Spring Cloud BOM -->
+            <!-- Spring Cloud BOM（Gateway、LoadBalancer 等） -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -53,7 +75,7 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Spring Cloud Alibaba BOM -->
+            <!-- Spring Cloud Alibaba BOM（Nacos Discovery、Nacos Config） -->
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
@@ -62,7 +84,7 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- JWT -->
+            <!-- JWT（jjwt 0.12.x — 支持 Spring Boot 3.x） -->
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-api</artifactId>
@@ -79,21 +101,21 @@
                 <version>${jjwt.version}</version>
             </dependency>
 
-            <!-- MyBatis-Plus -->
+            <!-- MyBatis-Plus（Spring Boot 3.x 兼容版本） -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
 
-            <!-- MySQL -->
+            <!-- MySQL 驱动（8.x） -->
             <dependency>
                 <groupId>com.mysql</groupId>
                 <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql.version}</version>
             </dependency>
 
-            <!-- 公共模块 -->
+            <!-- 公共模块（内部依赖） -->
             <dependency>
                 <groupId>com.login</groupId>
                 <artifactId>login-common</artifactId>
@@ -102,9 +124,13 @@
         </dependencies>
     </dependencyManagement>
 
+    <!-- ==========================================
+         构建配置
+         ========================================== -->
     <build>
         <pluginManagement>
             <plugins>
+                <!-- Spring Boot Maven 插件（打包可执行 jar） -->
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>

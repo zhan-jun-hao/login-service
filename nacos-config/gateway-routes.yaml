@@ -1,0 +1,58 @@
+# ==========================================
+# Nacos Gateway 路由配置 — gateway-routes.yaml
+# ==========================================
+# Data ID: gateway-routes.yaml
+# Group: DEFAULT_GROUP
+# 适用服务: login-gateway
+# 说明: Gateway 动态路由规则，修改后无需重启 Gateway
+# ==========================================
+
+spring:
+  cloud:
+    gateway:
+      # 服务发现自动路由
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+      # 手动路由规则
+      routes:
+        # ─── 认证服务 ───
+        - id: login-auth
+          uri: lb://login-auth
+          predicates:
+            - Path=/auth/**
+          filters:
+            - name: Retry
+              args:
+                retries: 1
+                statuses: BAD_GATEWAY, SERVICE_UNAVAILABLE
+
+        # ─── 用户服务 ───
+        - id: login-user
+          uri: lb://login-user
+          predicates:
+            - Path=/user/**
+
+        # ─── 管理员服务 ───
+        - id: login-admin
+          uri: lb://login-admin
+          predicates:
+            - Path=/admin/**
+
+      # 全局 CORS 跨域配置
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - PATCH
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600

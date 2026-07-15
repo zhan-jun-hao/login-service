@@ -1,0 +1,39 @@
+# ==========================================
+# Nacos 配置中心 Bootstrap 配置
+# ==========================================
+# 从 Nacos 配置中心加载共享配置和专用配置
+# 配置优先级：Nacos 共享配置 > Nacos 扩展配置 > application.yml
+
+spring:
+  application:
+    name: login-auth
+
+  cloud:
+    nacos:
+      # Nacos 配置中心
+      config:
+        # Nacos 服务地址
+        server-addr: localhost:8848
+        # 命名空间
+        namespace: public
+        # 配置分组
+        group: DEFAULT_GROUP
+        # 配置文件后缀（yaml / properties）
+        file-extension: yaml
+        # 共享配置
+        shared-configs:
+          # 共享 Redis 配置
+          - data-id: shared-redis.yaml
+            group: DEFAULT_GROUP
+            refresh: true
+          # 共享 JWT 配置
+          - data-id: shared-jwt.yaml
+            group: DEFAULT_GROUP
+            refresh: true
+        # 是否开启配置热刷新
+        refresh-enabled: true
+        enabled: true
+
+logging:
+  level:
+    com.alibaba.nacos.client.config: warn

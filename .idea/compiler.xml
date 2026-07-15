@@ -9,6 +9,7 @@
         <module name="login-auth" />
         <module name="login-user" />
         <module name="login-common" />
+        <module name="login-admin" />
         <module name="login-gateway" />
       </profile>
     </annotationProcessing>

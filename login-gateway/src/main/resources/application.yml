@@ -1,3 +1,10 @@
+# ==========================================
+# login-gateway 应用配置
+# ==========================================
+# Gateway 是整个微服务系统的统一入口（端口 8080）
+# 职责：路由转发、JWT 鉴权、白名单/黑名单/版本控制
+# ==========================================
+
 server:
   port: 8080
 
@@ -5,73 +12,147 @@ spring:
   application:
     name: login-gateway
 
-  # Redis（用于 token 黑名单检查）
+  # ==========================================
+  # Redis 配置（响应式）
+  # ==========================================
+  # Gateway 使用 WebFlux（响应式），必须使用响应式 Redis
+  # 用于存储：
+  #   - Token 黑名单（登出保护）
+  #   - 用户黑名单（精准踢人）
+  #   - 版本控制信息（批量踢人）
+  # ==========================================
   data:
     redis:
       host: localhost
       port: 6379
-      password:
-      database: 0
-      timeout: 3000ms
+      password:                           # 生产环境请设置密码
+      database: 0                         # 使用 0 号数据库
+      timeout: 3000ms                     # 连接超时
       lettuce:
         pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 0
-          max-wait: 1000ms
+          max-active: 16                  # 最大活跃连接（Gateway 并发高，适当增加）
+          max-idle: 8                     # 最大空闲连接
+          min-idle: 4                     # 最小空闲连接（预热连接池）
+          max-wait: 3000ms                # 获取连接最大等待时间
 
-  # Nacos 服务发现
+  # ==========================================
+  # Spring Cloud 配置
+  # ==========================================
   cloud:
+    # Nacos 服务发现
     nacos:
       discovery:
-        server-addr: localhost:8848
-        namespace: public
-        group: DEFAULT_GROUP
+        server-addr: localhost:8848        # Nacos 服务地址
+        namespace: public                  # 命名空间（public 为默认）
+        group: DEFAULT_GROUP               # 服务分组
+        # 服务元数据
+        metadata:
+          version: 1.0.0
+          region: default
 
+    # ==========================================
     # Gateway 路由配置
+    # ==========================================
     gateway:
       discovery:
         locator:
+          # 启用服务发现自动路由（根据 serviceId 自动创建路由）
           enabled: true
+          # 服务 ID 转小写（login-auth → login-auth）
           lower-case-service-id: true
+
+      # 手动配置的路由规则（优先级高于自动路由）
       routes:
-        # 认证服务
+        # ─── 认证服务 ───
         - id: login-auth
-          uri: lb://login-auth
+          uri: lb://login-auth              # lb:// 表示使用 LoadBalancer 负载均衡
           predicates:
             - Path=/auth/**
+          filters:
+            # 去掉路径前缀（可选）
+            # - StripPrefix=0
 
-        # 用户服务
+        # ─── 用户服务 ───
         - id: login-user
           uri: lb://login-user
           predicates:
             - Path=/user/**
+          filters:
+            # 请求重试（下游服务异常时自动重试）
+            - name: Retry
+              args:
+                retries: 2
+                statuses: BAD_GATEWAY, SERVICE_UNAVAILABLE, INTERNAL_SERVER_ERROR
+                methods: GET
 
-      # 全局 CORS 配置
+        # ─── 管理员服务 ───
+        - id: login-admin
+          uri: lb://login-admin
+          predicates:
+            - Path=/admin/**
+
+      # ==========================================
+      # 全局 CORS 跨域配置
+      # ==========================================
       globalcors:
         cors-configurations:
           '[/**]':
+            # 允许的源（* 表示所有，生产环境应指定具体域名）
             allowedOriginPatterns: "*"
-            allowedMethods: "*"
+            # 允许的 HTTP 方法
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - PATCH
+            # 允许的请求头
             allowedHeaders: "*"
+            # 是否允许携带 Cookie（JWT 场景一般不需要）
             allowCredentials: true
+            # 预检请求缓存时间（秒）
             maxAge: 3600
 
-# 日志
-logging:
-  level:
-    com.login: debug
-    org.springframework.cloud.gateway: info
-
+# ==========================================
+# JWT 和安全配置
+# ==========================================
 jwt:
+  # JWT 签名密钥（生产环境从 Nacos 配置中心或环境变量读取）
   secret: your-secret-key
-  # 白名单配置
+
+  # 白名单配置 — 这些路径不需要 JWT 鉴权
   whitelist:
+    # 是否启用白名单
+    enabled: true
+    # 白名单路径列表（支持 Ant 风格通配符：* 单段匹配，** 多段匹配）
     paths:
+      # 认证接口（登录、注册、刷新 token）
       - /auth/login
       - /auth/register
       - /auth/refresh
+      # 健康检查
       - /actuator/health
+      - /actuator/info
+      # API 文档（Swagger / SpringDoc）
       - /swagger-ui/**
+      - /swagger-resources/**
       - /v3/api-docs/**
-    enabled: true
+      - /webjars/**
+      # 静态资源
+      - /public/**
+      - /favicon.ico
+      # 错误页面
+      - /error
+
+# ==========================================
+# 日志配置
+# ==========================================
+logging:
+  level:
+    # 项目包：debug 级别
+    com.login: debug
+    # Gateway 框架：info 级别
+    org.springframework.cloud.gateway: info
+    # Reactor：warn 级别
+    reactor.netty: warn
